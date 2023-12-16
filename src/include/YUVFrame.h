@@ -14,6 +14,7 @@ public:
     ~YUVFrame();
 
     bool Fill(unsigned char Y, unsigned char Cb, unsigned char Cr);
+    bool InjectFrame(int x, int y, const YUVFrame& other);
 
     bool ReadFile(const std::string path);
     bool ToFile(const std::string path) const;
@@ -29,6 +30,8 @@ private:
     unsigned char *_buffer;
     unsigned int _width;
     unsigned int _height;
+    unsigned int _colorWidth;
+    unsigned int _colorHeight;
     unsigned int _ySize; //Y
     unsigned int _cSize; //CbCr
     unsigned int _bufferSize;

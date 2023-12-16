@@ -5,26 +5,35 @@
 
 int main(int argc, char **argv)
 {
-    std::ifstream in("res/cat.yuv", std::ios_base::binary);
-    std::ofstream out("res/output.yuv", std::ios_base::binary);
 
-    YUVFrame frame(640, 360, rand() % 256, 
-                                 rand() % 256, 
-                                 rand() % 256);
+    YUVFrame board(640, 360, 0, 125, 125);
+    
+    YUVFrame whiteFrame(40, 40, 255, 125, 125);
 
-    frame.ToFile("res/what.yuv");
+    int x = 1;
+    int y = 1;
 
-    for(int i = 0; i < 10; ++i)
+    board.InjectFrame(200, 200, whiteFrame); //correct
+    board.InjectFrame(80, 10, whiteFrame); //x!=y => uncorrect
+/*
+    for(int j = 0; j < 9; ++j)
     {
-        frame.ToFile(out);
-        if(i % 2 != 0)
-            frame.Fill(rand() % 256, rand() % 256, rand() % 256);
-        else
-            frame.ReadFile(in); // "in" is not good
+        board.InjectFrame(x, y, whiteFrame);
+        x+=41;
     }
-
-    out.close();
-    in.close();
+*/
+/*
+    for(int i = 0; i < 9; ++i)
+    {
+        for(int j = 0; j < 10; ++j)
+        {
+            board.InjectFrame(x, y, whiteFrame);
+            x+=40;
+        }
+        y+=40;
+    }
+*/
+    board.ToFile("res/what.yuv");
 
     return EXIT_SUCCESS;
 }

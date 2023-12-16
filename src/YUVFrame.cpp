@@ -4,9 +4,11 @@
 YUVFrame::YUVFrame(int width, int height, const std::string path) :
     _width(width),
     _height(height),
+    _colorWidth(width/2),
+    _colorHeight(height/2),
     _buffer(nullptr)
 {
-    if(_width <= 0 && _height <= 0)
+    if(_width <= 0 || _height <= 0)
         return;
 
     _ySize = _width * _height;
@@ -22,6 +24,8 @@ YUVFrame::YUVFrame(int width, int height, unsigned char Y,
                                           unsigned char Cr) :
     _width(width),
     _height(height),
+    _colorWidth(width/2),
+    _colorHeight(height/2),
     _buffer(nullptr)
 {
     if(_width <= 0 && _height <= 0)
@@ -51,6 +55,60 @@ bool YUVFrame::Fill(unsigned char Y, unsigned char Cb, unsigned char Cr)
               &_buffer[_ySize + _cSize], Cb);
     std::fill(&_buffer[_ySize + _cSize],
               &_buffer[_bufferSize], Cr);
+
+    return true;
+}
+
+bool YUVFrame::InjectFrame(int x, int y, const YUVFrame &other)
+{
+    if(x < 0 || y < 0 || x > _width || y > _height)
+        return false;
+    
+    unsigned int rowEnd = x + other._width > _width
+                            ? _width - x : other._width;
+    
+    unsigned int colEnd = y + other._height > _height
+                            ? _height : x + other._height;
+
+    unsigned int rowSize = rowEnd;
+    unsigned int cRowSize = rowSize / 2;
+    
+    int otherYPos = 0;
+    int otherUPos = other._ySize;
+    int otherVPos = other._ySize + other._cSize;
+
+    int yPos = x + y * _width;
+    int uPos = x/2 + y/2 * _colorWidth + _ySize;
+    int vPos = x/2 + y/2 * _colorWidth + _ySize + _cSize;
+
+    char isEvenRow = y % 2;
+
+    for(y; y < colEnd; ++y)
+    {
+        std::copy(&other._buffer[otherYPos], 
+                  &other._buffer[otherYPos + rowSize],
+                  &_buffer[yPos]);
+
+        otherYPos += other._width;
+        yPos += _width;
+
+        if(y % 2 == isEvenRow)
+        {
+            std::copy(&other._buffer[otherUPos], 
+                  &other._buffer[otherUPos + cRowSize],
+                  &_buffer[uPos]);
+
+            otherUPos += other._colorWidth;
+            uPos += _colorWidth;
+
+            std::copy(&other._buffer[otherVPos], 
+                  &other._buffer[otherVPos + cRowSize],
+                  &_buffer[vPos]);
+
+            otherVPos += other._colorWidth;
+            vPos += _colorWidth;
+        }
+    }
 
     return true;
 }
