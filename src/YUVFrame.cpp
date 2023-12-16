@@ -57,7 +57,7 @@ bool YUVFrame::Fill(unsigned char Y, unsigned char Cb, unsigned char Cr)
 
 bool YUVFrame::ReadFile(const std::string path)
 {
-    std::ifstream file(path);
+    std::ifstream file(path, std::ios_base::binary);
 
     if(!file.good())
         return false;
@@ -70,7 +70,7 @@ bool YUVFrame::ReadFile(const std::string path)
 
 bool YUVFrame::ToFile(const std::string path) const
 {
-    std::ofstream file(path);
+    std::ofstream file(path, std::ios_base::binary);
 
     if(!file.good())
         return false;

@@ -5,37 +5,26 @@
 
 int main(int argc, char **argv)
 {
-    try
-    {
-        Bitmap bmp("res/1.bmp");
-        bmp.ToFile("res/hihi.bmp");
+    std::ifstream in("res/cat.yuv", std::ios_base::binary);
+    std::ofstream out("res/output.yuv", std::ios_base::binary);
 
-        std::ifstream in("res/cat.yuv");
-        std::ofstream out("res/output.yuv");
-
-        YUVFrame frame(640, 360, rand() % 256, 
+    YUVFrame frame(640, 360, rand() % 256, 
                                  rand() % 256, 
                                  rand() % 256);
 
-        frame.ToFile("res/what.yuv");
+    frame.ToFile("res/what.yuv");
 
-        for(int i = 0; i < 10; ++i)
-        {
-            frame.ToFile(out);
-            if(i % 2 != 0)
-                frame.Fill(rand() % 256, rand() % 256, rand() % 256);
-            else
-                frame.ReadFile(in); // "in" is not good
-        }
-
-        out.close();
-        in.close();
-
-    }
-    catch(const char* e)
+    for(int i = 0; i < 10; ++i)
     {
-        std::cerr << e << '\n';
+        frame.ToFile(out);
+        if(i % 2 != 0)
+            frame.Fill(rand() % 256, rand() % 256, rand() % 256);
+        else
+            frame.ReadFile(in); // "in" is not good
     }
+
+    out.close();
+    in.close();
 
     return EXIT_SUCCESS;
 }
