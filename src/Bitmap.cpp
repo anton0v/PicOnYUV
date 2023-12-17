@@ -18,19 +18,22 @@ Bitmap::Bitmap(const std::string path) :
 
     CheckBMP();
 
+    _width = _DIB.width;
+    _height = _DIB.height;
+
     file.seekg(_header.offset, file.beg);
 
     _bytesPerPixel = _DIB.bpp / 8;
-    _bufferSize = _DIB.width * _DIB.height * _bytesPerPixel;
+    _bufferSize = _width * _height * _bytesPerPixel;
     _buffer = new unsigned char[_bufferSize];
    
     //padding multiple of 4
-    if(_DIB.width % 4 != 0)
+    if(_width % 4 != 0)
     {
-        _lineSize = _DIB.width * _bytesPerPixel;
+        _lineSize = _width * _bytesPerPixel;
         _padding = 4 - (_lineSize % 4);
         char *padBytes = new char[_padding] {0};
-        for(int y = 0; y < _DIB.height; y++)
+        for(int y = 0; y < _height; y++)
         {
             file.read((char*)_buffer + y * _lineSize, _lineSize);
             file.read(padBytes, _padding);
@@ -72,8 +75,8 @@ void Bitmap::ToFile(const std::string path)
         }
         delete[] padBytes;
     }
-
-    
+    else
+        file.write((char*)_buffer, _bufferSize);
 
 }
 

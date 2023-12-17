@@ -38,6 +38,14 @@ public:
 
     void ToFile(const std::string path);
 
+    const unsigned char* getBuffer() const {return _buffer;}
+    unsigned int getByteSize() const {return _bufferSize;}
+    unsigned int getPadding() const {return _padding;}
+    unsigned int getBytesPerPixel() const {return _bytesPerPixel;}
+    unsigned int getLineSize() const {return _lineSize;}
+    unsigned int getWidth() const {return _width;}
+    unsigned int getHeight() const {return _height;}
+
 private:
     bmpHeader _header;
     bmpDIB _DIB;
@@ -46,6 +54,8 @@ private:
     unsigned int _padding;
     unsigned int _bytesPerPixel;
     unsigned int _lineSize;
+    unsigned int _width;
+    unsigned int _height;
 
     void CheckBMP();
 };

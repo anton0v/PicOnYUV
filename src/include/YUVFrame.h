@@ -11,7 +11,14 @@ public:
     YUVFrame(int width, int height, unsigned char Y,
                                     unsigned char Cb,
                                     unsigned char Cr);
+    YUVFrame(int width, int height, unsigned char *buffer);
     ~YUVFrame();
+
+    YUVFrame(const YUVFrame& other);
+    YUVFrame(YUVFrame&& other);
+
+    YUVFrame& operator=(const YUVFrame& other);
+    YUVFrame& operator=(YUVFrame&& other);
 
     bool Fill(unsigned char Y, unsigned char Cb, unsigned char Cr);
     bool InjectFrame(int x, int y, const YUVFrame& other);

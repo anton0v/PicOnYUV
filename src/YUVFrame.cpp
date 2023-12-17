@@ -39,10 +39,92 @@ YUVFrame::YUVFrame(int width, int height, unsigned char Y,
     Fill(Y, Cb, Cr);
 }
 
+YUVFrame::YUVFrame(int width, int height, unsigned char *buffer) :
+    _width(width),
+    _height(height),
+    _colorWidth(width/2),
+    _colorHeight(height/2),
+    _buffer(buffer)
+{
+    _ySize = _width * _height;
+    _cSize = _ySize / 4;
+    _bufferSize = _ySize + 2 * _cSize;
+}
+
 YUVFrame::~YUVFrame()
 {
     if(_buffer != nullptr)
         delete _buffer;
+}
+
+YUVFrame::YUVFrame(const YUVFrame &other) :
+    _width(other._width),
+    _height(other._height),
+    _colorWidth(_width/2),
+    _colorHeight(_height/2)
+{
+    std::cout << "Copy/n";
+    if(_buffer != nullptr)
+        delete _buffer;
+
+    _buffer = new unsigned char[_bufferSize];
+
+    std::copy(&other._buffer[0], 
+              &other._buffer[_bufferSize],
+              &_buffer[0]);
+}
+
+YUVFrame::YUVFrame(YUVFrame && other) :
+    _width(other._width),
+    _height(other._height),
+    _colorWidth(_width/2),
+    _colorHeight(_height/2)
+{
+    std::cout << "Move/n";
+    if(_buffer != nullptr)
+        delete _buffer;
+
+    _ySize = _width * _height;
+    _cSize = _ySize / 4;
+    _bufferSize = _ySize + 2 * _cSize;
+
+    _buffer = other._buffer;
+}
+
+YUVFrame &YUVFrame::operator=(const YUVFrame &other)
+{
+    if(_buffer != nullptr)
+        delete _buffer;
+
+    _buffer = new unsigned char[_bufferSize];
+
+    std::copy(&other._buffer[0], 
+              &other._buffer[_bufferSize],
+              &_buffer[0]);
+
+    return *this;
+}
+
+YUVFrame &YUVFrame::operator=(YUVFrame &&other)
+{
+    std::cout << "Move/n";
+    if(_buffer != nullptr)
+        delete _buffer;
+
+    _buffer = new unsigned char[_bufferSize];
+
+    _width = other._width;
+    _height = other._height;
+    _colorWidth = _width/2;
+    _colorHeight = _height/2;
+
+    _ySize = _width * _height;
+    _cSize = _ySize / 4;
+    _bufferSize = _ySize + 2 * _cSize;
+
+   _buffer = other._buffer;
+   
+   return *this;
 }
 
 bool YUVFrame::Fill(unsigned char Y, unsigned char Cb, unsigned char Cr)

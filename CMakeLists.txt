@@ -4,10 +4,12 @@ project(PicOnYUV)
 
 set(SOURCES src/Main.cpp
             src/Bitmap.cpp
-            src/YUVFrame.cpp)
+            src/YUVFrame.cpp
+            src/Convertion.cpp)
 
 set(HEADERS src/include/Bitmap.h
-            src/include/YUVFrame.h)
+            src/include/YUVFrame.h
+            src/include/Convertion.h)
 
 set(RES_DIST_PATH ${CMAKE_CURRENT_BINARY_DIR}/res)
 
