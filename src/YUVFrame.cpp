@@ -64,13 +64,12 @@ bool YUVFrame::InjectFrame(int x, int y, const YUVFrame &other)
     if(x < 0 || y < 0 || x > _width || y > _height)
         return false;
     
-    unsigned int rowEnd = x + other._width > _width
+    unsigned int rowSize = x + other._width > _width
                             ? _width - x : other._width;
     
-    unsigned int colEnd = y + other._height > _height
-                            ? _height : x + other._height;
+    unsigned int rowCount = y + other._height > _height
+                            ? _height - y : other._height;
 
-    unsigned int rowSize = rowEnd;
     unsigned int cRowSize = rowSize / 2;
     
     int otherYPos = 0;
@@ -83,7 +82,7 @@ bool YUVFrame::InjectFrame(int x, int y, const YUVFrame &other)
 
     char isEvenRow = y % 2;
 
-    for(y; y < colEnd; ++y)
+    for(int i = 0; i < rowCount; ++i)
     {
         std::copy(&other._buffer[otherYPos], 
                   &other._buffer[otherYPos + rowSize],
@@ -92,7 +91,7 @@ bool YUVFrame::InjectFrame(int x, int y, const YUVFrame &other)
         otherYPos += other._width;
         yPos += _width;
 
-        if(y % 2 == isEvenRow)
+        if(i % 2 == 0)
         {
             std::copy(&other._buffer[otherUPos], 
                   &other._buffer[otherUPos + cRowSize],

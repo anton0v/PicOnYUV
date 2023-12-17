@@ -10,29 +10,23 @@ int main(int argc, char **argv)
     
     YUVFrame whiteFrame(40, 40, 255, 125, 125);
 
-    int x = 1;
-    int y = 1;
+    int x = 13;
+    int y = 13;
 
-    board.InjectFrame(200, 200, whiteFrame); //correct
-    board.InjectFrame(80, 10, whiteFrame); //x!=y => uncorrect
-/*
-    for(int j = 0; j < 9; ++j)
+    for(int i = 0; i < 10; ++i)
     {
-        board.InjectFrame(x, y, whiteFrame);
-        x+=41;
-    }
-*/
-/*
-    for(int i = 0; i < 9; ++i)
-    {
-        for(int j = 0; j < 10; ++j)
+        if(i % 2 == 0)
+            x = 13;
+        else
+            x = 53;
+        for(int j = 0; j < 18; ++j)
         {
             board.InjectFrame(x, y, whiteFrame);
-            x+=40;
+            x+=80;
         }
         y+=40;
     }
-*/
+
     board.ToFile("res/what.yuv");
 
     return EXIT_SUCCESS;
