@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
     try
     {
-        Bitmap bmp("res/angry.bmp");
+        Bitmap bmp("res/1.bmp");
         bmp.ToFile("res/aga.bmp");
 
         YUVFrame picture = BMPToYUV(bmp);

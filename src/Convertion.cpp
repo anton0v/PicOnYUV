@@ -1,11 +1,17 @@
 #include "Convertion.h"
+#include <iostream>
 
 YUVFrame BMPToYUV(const Bitmap &bmp)
 {
     unsigned int width = bmp.getWidth();
     unsigned int height = bmp.getHeight();
+    unsigned int wSpace = 0;
 
-    if(width % 2 == 1) width--;
+    if(width % 2 == 1) 
+    {
+        width--;
+        wSpace = 3;
+    }
     if(height % 2 == 1) height--;
 
     unsigned int ySize = width * height;
@@ -15,9 +21,9 @@ YUVFrame BMPToYUV(const Bitmap &bmp)
 
     const unsigned char *rgb = bmp.getBuffer();
 
-    int rPos = 0;
-    int gPos = 3;
-    int bPos = 6;
+    int rPos = 2;
+    int gPos = 1;
+    int bPos = 0;
 
     int yPos = 0;
     int uPos = ySize;
@@ -29,9 +35,9 @@ YUVFrame BMPToYUV(const Bitmap &bmp)
         {
             for(int x = 0; x < width; x += 2)
             {
-                buffer[yPos++] = ((66 * rgb[rPos] + 129 * rgb[gPos] +  25 * rgb[bPos] + 128) >> 8) + 16;
-                buffer[uPos++] = (( -38 * rgb[rPos] - 74 * rgb[gPos] + 112 * rgb[bPos] + 128) >> 8) + 128;
-                buffer[vPos++] = (( 112 * rgb[rPos] - 94 * rgb[gPos] - 18 * rgb[bPos] + 128) >> 8) + 128;
+                buffer[yPos++] = ((66 * rgb[rPos] + 129 * rgb[gPos] + 25 * rgb[bPos] + 128) >> 8) + 16;
+                buffer[uPos++] = ((-38 * rgb[rPos] -74 * rgb[gPos] + 112 * rgb[bPos] + 128) >> 8) + 128;
+                buffer[vPos++] = ((112 * rgb[rPos] -94 * rgb[gPos] -18 * rgb[bPos] + 128) >> 8) + 128;
 
                 rPos += 3;
                 gPos += 3;
@@ -55,7 +61,9 @@ YUVFrame BMPToYUV(const Bitmap &bmp)
                 bPos += 3;
             }
         }
-
+        rPos += wSpace;
+        gPos += wSpace;
+        bPos += wSpace;
         
     }
 
