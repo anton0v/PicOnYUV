@@ -4,6 +4,6 @@
 #include "Bitmap.h"
 #include "YUVFrame.h"
 
-YUVFrame BMPToYUV(const Bitmap& bmp);
+YUVFrame BMPToYUV(const Bitmap& bmp, bool flipped);
 
 #endif

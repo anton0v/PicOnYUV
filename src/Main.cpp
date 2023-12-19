@@ -8,10 +8,11 @@ int main(int argc, char **argv)
 {
     try
     {
-        Bitmap bmp("res/1.bmp");
+        Bitmap bmp("res/angry.bmp");
         bmp.ToFile("res/aga.bmp");
 
-        YUVFrame picture = BMPToYUV(bmp);
+        YUVFrame picture = BMPToYUV(bmp, true);
+        YUVFrame picture2 = BMPToYUV(bmp, false);
         picture.ToFile("res/Opa.yuv");
 
         std::ifstream input("res/cat.yuv", std::ios::binary);
@@ -22,6 +23,7 @@ int main(int argc, char **argv)
         {
             frame.ReadFile(input);
             frame.InjectFrame(50, 50, picture);
+            frame.InjectFrame(200, 50, picture2);
             frame.ToFile(output);
         }
 

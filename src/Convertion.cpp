@@ -4,8 +4,12 @@
 
 void BGR24LinesToYUV(unsigned int begin, unsigned int end, 
                      unsigned char *buffer, const unsigned char *rgb, 
-                     unsigned int rgbWidth, unsigned int rgbHeight)
+                     unsigned int rgbWidth, unsigned int rgbHeight, bool flipped)
 {
+    unsigned int rowCount = end - begin;
+    char sign = 1;
+
+    //from odd width rgb to 2x2 yuv
     unsigned int oddWidthBytes = (rgbWidth % 2 != 0) * 3;
     unsigned int width = oddWidthBytes ? rgbWidth - 1: rgbWidth;
     unsigned int height = (rgbHeight % 2 != 0) ? rgbHeight - 1: rgbHeight;
@@ -13,21 +17,47 @@ void BGR24LinesToYUV(unsigned int begin, unsigned int end,
     unsigned int ySize = width * height;
     unsigned int cSize = ySize / 4;
 
-    unsigned int rPos = 2 + begin * rgbWidth * 3;
-    unsigned int gPos = 1 + begin * rgbWidth * 3;
-    unsigned int bPos = begin * rgbWidth * 3;
+    unsigned int rPos , gPos, bPos;
+    unsigned int yPos, uPos, vPos;
+    unsigned int y;
 
-    unsigned int yPos = begin * width;
-    unsigned int uPos = ySize + begin * width / 4;
-    unsigned int vPos = ySize + cSize + begin * width / 4;
-
-    if(begin % 2 != 0)
+    if (flipped)
     {
-        uPos += width / 4;
-        vPos += width / 4;
+        sign = -1;
+        y = (end - 1);
+        rPos = 2 + y * rgbWidth * 3;
+        gPos = 1 + y * rgbWidth * 3;
+        bPos = y * rgbWidth * 3;
+
+        yPos = (rgbHeight - end) * width;
+        uPos = ySize + (rgbHeight - end) * width / 4;
+        vPos = ySize + cSize + (rgbHeight - end) * width / 4;
+
+        if(end % 2 != 0)
+        {
+            uPos -= width / 4;
+            vPos -= width / 4;
+        }
+    }
+    else
+    {
+        rPos = 2 + begin * rgbWidth * 3;
+        gPos = 1 + begin * rgbWidth * 3;
+        bPos = begin * rgbWidth * 3;
+        y = begin;
+
+        yPos = begin * width;
+        uPos = ySize + begin * width / 4;
+        vPos = ySize + cSize + begin * width / 4;
+
+        if(begin % 2 != 0)
+        {
+            uPos += width / 4;
+            vPos += width / 4;
+        }
     }
 
-    for(unsigned int y = begin; y < end; ++y)
+    for(unsigned int i = 0; i < rowCount; ++i)
     {
         if(y % 2 == 0)
         {
@@ -53,12 +83,13 @@ void BGR24LinesToYUV(unsigned int begin, unsigned int end,
                 rPos += 3; gPos += 3; bPos += 3;
             }
         }
-        rPos += oddWidthBytes; gPos += oddWidthBytes; bPos += oddWidthBytes;
+        y += sign;
+        rPos = 2 + (y) * rgbWidth * 3; gPos = rPos - 1; bPos = rPos - 2;
         
     }
 }
 
-YUVFrame BMPToYUV(const Bitmap &bmp)
+YUVFrame BMPToYUV(const Bitmap &bmp, bool flipped)
 {
     unsigned int oldWidth = bmp.getWidth();
     unsigned int height = bmp.getHeight();
@@ -92,12 +123,12 @@ YUVFrame BMPToYUV(const Bitmap &bmp)
 									  : begin + rowCount;
         
         threads[active] = std::thread(BGR24LinesToYUV, begin, end,
-                                      buffer, rgb, oldWidth, height);
+                                      buffer, rgb, oldWidth, height, flipped);
 
         begin = end;
     }
 
-    BGR24LinesToYUV(begin, height, buffer, rgb, oldWidth, height);
+    BGR24LinesToYUV(begin, height, buffer, rgb, oldWidth, height, flipped);
 
     for (int i = 0; i < active; i++)
 	{
