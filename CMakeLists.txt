@@ -13,9 +13,9 @@ set(HEADERS src/include/Bitmap.h
 
 set(RES_DIST_PATH ${CMAKE_CURRENT_BINARY_DIR}/res)
 
-add_executable(Test ${SOURCES} ${HEADERS})
+add_executable(PicOnYUV ${SOURCES} ${HEADERS})
 
-target_include_directories(Test PUBLIC src/include/)
+target_include_directories(PicOnYUV PUBLIC src/include/)
 
 #copy assets to build tree
 add_custom_target(copy_asset
@@ -24,4 +24,4 @@ add_custom_target(copy_asset
     ${RES_DIST_PATH}
 )
 
-add_dependencies(Test copy_asset)
+add_dependencies(PicOnYUV copy_asset)

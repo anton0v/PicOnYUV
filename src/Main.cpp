@@ -1,33 +1,49 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 #include "Bitmap.h"
 #include "YUVFrame.h"
 #include "Convertion.h"
 
 int main(int argc, char **argv)
 {
+    if(argc < 5)
+    {
+        std::cout << "input: name.bmp X.Y name.yuv W.H\n";
+        return EXIT_SUCCESS;
+    }
+
     try
     {
-        Bitmap bmp("res/angry.bmp");
-        bmp.ToFile("res/aga.bmp");
-
+        Bitmap bmp(argv[1]);
         YUVFrame picture = BMPToYUV(bmp, true);
-        YUVFrame picture2 = BMPToYUV(bmp, false);
-        picture.ToFile("res/Opa.yuv");
 
-        std::ifstream input("res/cat.yuv", std::ios::binary);
-        std::ofstream output("res/out.yuv", std::ios::binary);
-        YUVFrame frame(640, 360, 255, 125, 125);
+        std::ifstream input(argv[3], std::ios::binary);
+        std::ofstream output("out.yuv", std::ios::binary);
 
-        for(int i = 0; i < 221; ++i)
+        std::string xy(argv[2]);
+
+        int pos = xy.find('.');
+        int x = atoi(xy.substr(0, pos).c_str()); 
+        int y = atoi(xy.substr(pos + 1, xy.size()).c_str()); 
+
+        std::string wxh(argv[4]);
+
+        pos = wxh.find('.');
+        int width = atoi(wxh.substr(0, pos).c_str()); 
+        int height = atoi(wxh.substr(pos + 1, wxh.size()).c_str()); 
+
+        YUVFrame frame(width, height, 255, 125, 125);
+
+        while(!input.eof())
         {
             frame.ReadFile(input);
-            frame.InjectFrame(50, 50, picture);
-            frame.InjectFrame(200, 50, picture2);
+            frame.InjectFrame(x, y, picture);
             frame.ToFile(output);
         }
 
         input.close();
+        output.close();
     }
     catch(const char* e)
     {
